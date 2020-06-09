@@ -1,0 +1,38 @@
+{
+	"name": "sfdev/amazon-product-loader",
+    "type": "library",
+    "description": "PHP client for amazon product loader",
+    "keywords": ["amazon", "product", "php"],
+    "homepage": "https://bitbucket.org/sfds-dev/amazon-product-loader/",
+    "support": {
+        "issues": "https://bitbucket.org/sfds-dev/amazon-product-loader/issues",
+        "docs": "https://bitbucket.org/sfds-dev/amazon-product-loader/"
+    },
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Neal Wong",
+            "email": "neal.wkacc@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+    	"php": "^7.0",
+        "elasticsearch/elasticsearch": "<7.0",
+        "massivescale/celery-php": "dev-master",
+        "php-amqplib/php-amqplib": "^2.11"
+    },
+    "repositories": [
+	    {
+	        "type": "vcs",
+	        "url": "https://nealwk@bitbucket.org/sfds-dev/celery-php.git"
+	    }
+	],
+	"autoload": {
+        "psr-4": {
+            "AmazonProductLoader\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
