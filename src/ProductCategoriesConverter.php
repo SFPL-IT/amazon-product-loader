@@ -8,7 +8,7 @@
 
 namespace AmazonProductLoader;
 
-class ProductDetailConverter extends EsConverter {
+class ProductCategoriesConverter extends EsConverter {
 	public function convert($data) {
 		return parent::convert($data);
 	}

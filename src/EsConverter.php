@@ -8,8 +8,17 @@
 
 namespace AmazonProductLoader;
 
-class ProductDetailConverter extends EsConverter {
+class EsConverter {
 	public function convert($data) {
-		return parent::convert($data);
+		$result = [];
+		if (!$data) {
+			return $result;
+		}
+	
+		foreach ($data['hits']['hits'] as $item) {
+			$result[$item['_id']] = $item['_source'];
+		}
+
+		return $result;
 	}
 }

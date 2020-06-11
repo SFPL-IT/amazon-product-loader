@@ -27,13 +27,15 @@ class ProductLoader {
     	$this->es = $builder->build();
 
     	$this->productDetailConverter = new ProductDetailConverter();
+        $this->productCategoriesConverter = new ProductCategoriesConverter();
     	$this->indiceNamePattern = 'matching_products_%s';
+        $this->categoryIndiceNamePattern = 'products_categories_%s';
     }
 
     public function getProducts($asins, $country = 'us') {
     	$products = array();
 
-    	$indiceName = sprintf($this->indiceNamePattern, $country);
+    	$indiceName = sprintf($this->indiceNamePattern, strtolower($country));
     	$params = array(
     		'index' => $indiceName,
     		'from' => 0,
@@ -49,6 +51,27 @@ class ProductLoader {
     	}
 
     	return $products;
+    }
+
+    public function getProductCategories($asins, $country = 'us') {
+        $productCategories = array();
+
+        $indiceName = sprintf($this->categoryIndiceNamePattern, strtolower($country));
+        $params = array(
+            'index' => $indiceName,
+            'from' => 0,
+            'size' => count($asins),
+            'body' => array(
+                'query' => array('terms' => ['_id' => $asins])
+            )
+        );
+        $resp = $this->es->search($params);
+        $result = $this->productCategoriesConverter->convert($resp);
+        foreach ($asins as $asin) {
+            $productCategories[$asin] = $result[$asin] ?? NULL;
+        }
+
+        return $productCategories;
     }
 
     public function scan(
