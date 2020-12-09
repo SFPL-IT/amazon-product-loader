@@ -28,8 +28,10 @@ class ProductLoader {
 
     	$this->productDetailConverter = new ProductDetailConverter();
         $this->productCategoriesConverter = new ProductCategoriesConverter();
+        $this->productDetailWebConverter = new ProductDetailWebConverter();
     	$this->indiceNamePattern = 'matching_products_%s';
         $this->categoryIndiceNamePattern = 'products_categories_%s';
+        $this->productDetailsWebIndice = 'product_details_web';
     }
 
     public function getProducts($asins, $country = 'us') {
@@ -72,6 +74,58 @@ class ProductLoader {
         }
 
         return $productCategories;
+    }
+
+    public function getProductOverview($asins, $country = 'us') {
+        $productOverviews = array();
+
+        $productIds = [];
+        $countryUpper = strtoupper($country);
+        foreach ($asins as $asin) {
+            $productIds[] = $countryUpper . ':' . $asin;
+        }
+
+        $params = array(
+            'index' => $this->productDetailsWebIndice,
+            'from' => 0,
+            'size' => count($productIds),
+            'body' => array(
+                'query' => array('terms' => ['_id' => $productIds])
+            )
+        );
+
+        $resp = $this->es->search($params);
+        $result = $this->productDetailWebConverter->convert($resp);
+        foreach ($asins as $asin) {
+            $productId = $countryUpper . ':' . $asin;
+            $productDetailWeb = $result[$productId] ?? NULL;
+            if ($productDetailWeb == NULL) {
+                $productOverviews[$asin] = NULL;
+            } else {
+                $productOverview = [
+                    'not_found' => $productDetailWeb['not_found'],
+                    'available' => $productDetailWeb['available'],
+                    'time' => $productDetailWeb['time'],
+                ];
+
+                $reviewStar = isset($productDetailWeb['star']) ? $productDetailWeb['star'] : NULL;
+                $reviewCnt = isset($productDetailWeb['reviews']) ? $productDetailWeb['reviews'] : NULL;
+                if (isset($productDetailWeb['review_overview'])) {
+                    $reviewOverview = $productDetailWeb['review_overview'];
+                } else {
+                    $reviewOverview = [];
+                }
+
+                $productOverview['review'] =  array_merge(
+                    ['review_count' => $reviewCnt, 'review_star' => $reviewStar],
+                    $reviewOverview
+                );
+
+                $productOverviews[$asin] = $productOverview;
+            }
+        }
+
+        return $productOverviews;
     }
 
     public function scan(
