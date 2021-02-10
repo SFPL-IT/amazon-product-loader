@@ -11,11 +11,11 @@ namespace AmazonProductLoader;
 use AmazonProductLoader\RedisTaskSender;
 
 
-class ProductDetailWebTaskSender extends RedisTaskSender {
+class ReviewTaskSender extends RedisTaskSender {
 	private $redisConfig;
 	private $redisClient;
 
-    public function sendTask($asins, $country = 'us', $taskKey = 'detail_page:start_urls') {
+    public function sendTask($asins, $country = 'us', $taskKey = 'review:start_urls') {
         parent::sendTask($asins, $country, $taskKey);
 	}
 }

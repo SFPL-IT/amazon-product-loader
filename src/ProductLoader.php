@@ -29,9 +29,11 @@ class ProductLoader {
     	$this->productDetailConverter = new ProductDetailConverter();
         $this->productCategoriesConverter = new ProductCategoriesConverter();
         $this->productDetailWebConverter = new ProductDetailWebConverter();
+        $this->reviewConverter = new ReviewConverter();
     	$this->indiceNamePattern = 'matching_products_%s';
         $this->categoryIndiceNamePattern = 'products_categories_%s';
         $this->productDetailsWebIndice = 'product_details_web';
+        $this->reviewIndice = 'reviews';
     }
 
     public function getProducts($asins, $country = 'us') {
@@ -126,6 +128,30 @@ class ProductLoader {
         }
 
         return $productOverviews;
+    }
+
+    public function getProductReviews($asins) {
+        $result = [];
+        foreach ($asins as $asin) {
+            $result[$asin] = $this->getSingleProductReviews($asin);
+        }
+
+        return $result;
+    }
+
+    public function getSingleProductReviews($asin) {
+        $countryUpper = strtoupper($country);
+
+        $params = array(
+            'index' => $this->reviewIndice,
+            'from' => 0,
+            'body' => array(
+                'query' => array('match' => ['asin' => $asin])
+            )
+        );
+
+        $resp = $this->es->search($params);
+        return $this->reviewConverter->convert($resp);
     }
 
     public function scan(
