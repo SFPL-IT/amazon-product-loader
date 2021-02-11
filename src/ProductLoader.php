@@ -104,9 +104,19 @@ class ProductLoader {
             if ($productDetailWeb == NULL) {
                 $productOverviews[$asin] = NULL;
             } else {
+                if (isset($productDetailWeb['available'])) {
+                    $available = $productDetailWeb['available'];
+                } else {
+                    $available = FALSE;
+                }
+                if (isset($productDetailWeb['not_found'])) {
+                    $notFound = $productDetailWeb['not_found'];
+                } else {
+                    $notFound = TRUE;
+                }
                 $productOverview = [
-                    'not_found' => $productDetailWeb['not_found'],
-                    'available' => $productDetailWeb['available'],
+                    'not_found' => $notFound,
+                    'available' => $available,
                     'time' => $productDetailWeb['time'],
                 ];
 

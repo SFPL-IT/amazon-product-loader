@@ -12,9 +12,6 @@ use AmazonProductLoader\RedisTaskSender;
 
 
 class ProductDetailWebTaskSender extends RedisTaskSender {
-	private $redisConfig;
-	private $redisClient;
-
     public function sendTask($asins, $country = 'us', $taskKey = 'detail_page:start_urls') {
         parent::sendTask($asins, $country, $taskKey);
 	}
