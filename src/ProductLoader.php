@@ -150,8 +150,6 @@ class ProductLoader {
     }
 
     public function getSingleProductReviews($asin) {
-        $countryUpper = strtoupper($country);
-
         $params = array(
             'index' => $this->reviewIndice,
             'from' => 0,
