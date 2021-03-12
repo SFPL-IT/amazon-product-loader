@@ -10,6 +10,18 @@ namespace AmazonProductLoader;
 
 class ReviewConverter extends EsConverter {
 	public function convert($data) {
-		return parent::convert($data);
+		if (empty($data)) {
+			return $data;
+		}
+
+		if (array_key_exists('hits', $data)) {
+			return parent::convert($data);
+		}
+
+		if (array_key_exists('_source', $data)) {
+			return $data['_source'];
+		}
+
+		return $data;
 	}
 }

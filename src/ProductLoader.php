@@ -150,16 +150,14 @@ class ProductLoader {
     }
 
     public function getSingleProductReviews($asin) {
-        $params = array(
-            'index' => $this->reviewIndice,
-            'from' => 0,
-            'body' => array(
-                'query' => array('match' => ['asin' => $asin])
-            )
-        );
+        $result = [];
+        $query = ['query' => ['match' => ['asin' => $asin]]];
+        foreach ($this->scan($this->reviewIndice, $query) as $hit) {
+            $review = $this->reviewConverter->convert($hit);
+            $result[$review['review_id']] = $review;
+        }
 
-        $resp = $this->es->search($params);
-        return $this->reviewConverter->convert($resp);
+        return $result;
     }
 
     public function scan(
