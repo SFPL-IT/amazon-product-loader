@@ -114,11 +114,11 @@ class ProductLoader {
                 } else {
                     $notFound = TRUE;
                 }
-                $productOverview = [
-                    'not_found' => $notFound,
-                    'available' => $available,
-                    'time' => $productDetailWeb['time'],
-                ];
+
+                $details = $productDetailWeb['details'] ?? [];
+                $title = $productDetailWeb['title'] ?? '';
+                $featureBullets = $productDetailWeb['feature_bullets'] ?? [];
+                $description = $productDetailWeb['product_description'] ?? '';
 
                 $reviewStar = isset($productDetailWeb['star']) ? $productDetailWeb['star'] : NULL;
                 $reviewCnt = isset($productDetailWeb['reviews']) ? $productDetailWeb['reviews'] : NULL;
@@ -127,6 +127,21 @@ class ProductLoader {
                 } else {
                     $reviewOverview = [];
                 }
+
+                $productOverview = [
+                    'not_found' => $notFound,
+                    'available' => $available,
+                    'marketplace' => strtoupper($productDetailWeb['marketplace']),
+                    'asin' => $productDetailWeb['asin'],
+                    'title' => $title,
+                    'feature_bullets' => $featureBullets,
+                    'description' => $description,
+                    'stars' => $reviewStar,
+                    'reviews' => $reviewCnt,
+                    'review_overview' => $reviewOverview,
+                    'details' => $details,
+                    'time' => $productDetailWeb['time'],
+                ];
 
                 $productOverview['review'] =  array_merge(
                     ['review_count' => $reviewCnt, 'review_star' => $reviewStar],
